@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 public class MusicPlayer {
-
     private JPanel mainPanel;
     private JLabel rightSideTopLabel;
     private JPanel datePanel;
@@ -27,9 +25,12 @@ public class MusicPlayer {
     private JPanel playPanel;
     private JLabel pauseLabel;
     private JPanel pausePanel;
-    //private Image myImage;
-    //private ImageIcon myImageIcon;
+    private JPanel rightPanel;
 
+    /**
+     * Constructor for Music Player
+     * @throws IOException
+     */
     public MusicPlayer() throws IOException {
         JFrame frame = new JFrame("Discover a new song daily");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,12 +48,17 @@ public class MusicPlayer {
         frame.setVisible(true);
         frame.add(mainPanel);
 
+        /**
+         * Action listener for play button label
+         */
         playButtonLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
 
                 super.mouseClicked(e);
                 System.out.println("Hello");
+                int clicked = 0;
+                clicked++;
                 //play the musuci and switch sign
 
                 Image pauseImage = null;
@@ -64,6 +70,10 @@ public class MusicPlayer {
                 pauseImage = pauseImage.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
                 ImageIcon pauseImageIcon = new ImageIcon(pauseImage);
                 playButtonLabel.setIcon(pauseImageIcon);
+
+                if (clicked % 2 == 0) {
+                    playButtonLabel.setIcon(myImageIcon);
+                }
 
             }
         });
