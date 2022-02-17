@@ -40,15 +40,9 @@ public class MusicPlayer {
     private JPanel sliderPanel;
     private JLabel songSubLabel;
     private JLabel rightHeader;
-    private Statement myStmt = null;
-    private Connection myConn = null;
-    private ResultSet myRs = null;
     private String url;
-    private String name;
-    private String title;
-    private String year;
-    private String album;
-    private String title2;
+
+    MusicLogic m = new MusicLogic();
 
     //store current position
     Long currentFrame;
@@ -71,47 +65,11 @@ public class MusicPlayer {
         frame.setSize(925, 650);
         frame.setResizable(false);
 
-        //DB STUFF
-        Connection myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/musicdb",
-                "student", "student");
+        m.connectToDB();
+        m.getDBRS();
+        String me = m.getDBRS();
+        m.createAndPlayMusicPlayer(me);
 
-        //Create query and execute for hip hop radio.
-        String query3 = "SELECT * FROM song_info ORDER BY RAND() LIMIT 1";
-        myStmt = myConn.createStatement();
-        myRs = myStmt.executeQuery(query3);
-
-        //See if RS returns anything and get info based on it.
-        while (myRs.next()) {
-
-            System.out.println(myRs.getString(2));
-            name = myRs.getString(2);
-
-            System.out.println(myRs.getString(4));
-            album = myRs.getString(4);
-
-            System.out.println(myRs.getString(5));
-            title = myRs.getString(5);
-            title2 = title.replaceAll("\\s", "");
-
-            System.out.println(myRs.getString(8));
-            year = myRs.getString(8);
-
-
-            //the filepath string for a specific song
-            filePath = "C:\\Users\\Dalton Price\\Downloads\\RapSongOfTheDayApp\\" + title2 + ".wav";
-            songNameLabel.setText(name + " - " + title);
-            songSubLabel.setText(album + " - " + year);
-        }
-
-        //create AudioInputStream object
-        audioInputStream =
-                AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
-
-        //create clip reference
-        clip = AudioSystem.getClip();
-
-        //open audioInputStream to the clip
-        clip.open(audioInputStream);
 
         //Set images for labels
         Image myImage = ImageIO.read(getClass().getResource("downloadplay.png"));
@@ -135,7 +93,7 @@ public class MusicPlayer {
                 "<br> This was a good album and elevated kodak alot with his music.</html>");
 
         //Display current date
-        displayCurrentDate();
+        m.displayCurrentDate(dateLabel);
         //rightSideTopLabel.setText("<html><center>S O N G  <br><br> O F <br><br> T H E <br><br> D A Y</html>");
         rightSideTopLabel.setText("New music, everyday.");
         frame.setVisible(true);
@@ -148,7 +106,7 @@ public class MusicPlayer {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                play();
+                m.play();
             }
         });
 
@@ -170,41 +128,9 @@ public class MusicPlayer {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                pause();
+                m.pause();
             }
         });
-    }
-
-    /**
-     * Display current date at top of screen
-     */
-    public void displayCurrentDate() {
-        String p = "EEEEE, MMMMM dd, yyyy";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(p);
-        String date = simpleDateFormat.format(new Date());
-        dateLabel.setText(date);
-    }
-
-    /**
-     * Play the selected music
-     */
-    public void play() {
-        //start the clip
-        clip.start();
-        status = "play";
-    }
-
-    /**
-     * Pause the song
-     */
-    public void pause() {
-        if (status.equals("paused")) {
-            return;
-        }
-        this.currentFrame =
-                this.clip.getMicrosecondPosition();
-        clip.stop();
-        status = "paused";
     }
 
 }
